@@ -1,8 +1,11 @@
 import AppLayout from "@/components/AppLayout";
-import { monthlySummaries, formatCurrency } from "@/lib/data";
+import { useData } from "@/context/DataContext";
+import { formatCurrency } from "@/lib/data";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 export default function RekapBulananPage() {
+  const { monthlySummaries } = useData();
+
   return (
     <AppLayout>
       <div className="mb-6">

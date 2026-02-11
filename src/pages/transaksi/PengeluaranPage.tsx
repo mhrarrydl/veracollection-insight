@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import AppLayout from "@/components/AppLayout";
-import { transactions, formatCurrency, expenseCategories, type Transaction } from "@/lib/data";
+import { useData } from "@/context/DataContext";
+import { formatCurrency, expenseCategories, type Transaction } from "@/lib/data";
 import { Plus, MinusCircle, Search, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -10,7 +11,9 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 
 export default function PengeluaranPage() {
-  const [all, setAll] = useState<Transaction[]>(transactions.filter((t) => t.type === "pengeluaran"));
+  const { transactions, addTransaction, removeTransaction } = useData();
+  const pengeluaran = useMemo(() => transactions.filter((t) => t.type === "pengeluaran"), [transactions]);
+
   const [search, setSearch] = useState("");
   const [addOpen, setAddOpen] = useState(false);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
@@ -21,13 +24,13 @@ export default function PengeluaranPage() {
   const save = () => {
     if (!desc || !amount) return;
     const tx: Transaction = { id: `T${Date.now()}`, date, type: "pengeluaran", description: desc, amount: Number(amount), category: cat };
-    setAll([tx, ...all]);
+    addTransaction(tx);
     setDesc(""); setAmount("");
     setAddOpen(false);
     toast({ title: `Pengeluaran dicatat — ${formatCurrency(Number(amount))}` });
   };
 
-  const filtered = all.filter((tx) => !search || tx.description.toLowerCase().includes(search.toLowerCase()));
+  const filtered = pengeluaran.filter((tx) => !search || tx.description.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <AppLayout>
@@ -50,7 +53,7 @@ export default function PengeluaranPage() {
               <p className="text-xs text-muted-foreground">{tx.date}{tx.category && ` • ${tx.category}`}</p>
             </div>
             <span className="text-sm font-bold text-foreground">-{formatCurrency(tx.amount)}</span>
-            <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => { setAll((p) => p.filter((t) => t.id !== tx.id)); toast({ title: "Dihapus" }); }}><Trash2 className="w-3.5 h-3.5 text-destructive" /></Button>
+            <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => { removeTransaction(tx.id); toast({ title: "Dihapus" }); }}><Trash2 className="w-3.5 h-3.5 text-destructive" /></Button>
           </div>
         ))}
         {!filtered.length && <div className="p-8 text-center text-muted-foreground text-sm">Belum ada pengeluaran.</div>}

@@ -1,36 +1,38 @@
 import AppLayout from "@/components/AppLayout";
-import { monthlySummaries, formatCurrency, getHealthScore } from "@/lib/data";
+import { useData } from "@/context/DataContext";
+import { formatCurrency } from "@/lib/data";
 import { DollarSign, TrendingUp, TrendingDown, Activity } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { cn } from "@/lib/utils";
+import { useMemo } from "react";
 
-const current = monthlySummaries[monthlySummaries.length - 1];
-const prev = monthlySummaries[monthlySummaries.length - 2];
-const pct = (cur: number, pre: number) => ((cur - pre) / pre * 100).toFixed(1);
-
-const health = getHealthScore();
-
-const stats = [
-  { label: "Total Penjualan", value: formatCurrency(current.penjualan), change: pct(current.penjualan, prev.penjualan), icon: DollarSign, iconBg: "bg-success", up: true },
-  { label: "Laba Bersih", value: formatCurrency(current.laba), change: pct(current.laba, prev.laba), icon: TrendingUp, iconBg: "bg-primary", up: true },
-  { label: "Total Pengeluaran", value: formatCurrency(current.pembelian + current.pengeluaran), change: pct(current.pembelian + current.pengeluaran, prev.pembelian + prev.pengeluaran), icon: TrendingDown, iconBg: "bg-destructive", up: false },
-  { label: "Kesehatan Usaha", value: health.label, change: `${health.score.toFixed(1)}%`, icon: Activity, iconBg: "bg-warning", up: true },
-];
-
-// Full year data for trend chart
-const trendData = monthlySummaries.map((m) => ({
-  month: m.month,
-  Pendapatan: m.penjualan,
-  Laba: m.laba,
-}));
-
-const cashFlowData = monthlySummaries.map((m) => ({
-  month: m.month,
-  "Kas Masuk": m.penjualan,
-  "Kas Keluar": m.pembelian + m.pengeluaran,
-}));
+const pct = (cur: number, pre: number) => pre === 0 ? "0.0" : ((cur - pre) / pre * 100).toFixed(1);
 
 const Index = () => {
+  const { monthlySummaries, currentMonth, prevMonth } = useData();
+
+  const health = useMemo(() => {
+    const profitMargin = currentMonth.penjualan > 0 ? (currentMonth.laba / currentMonth.penjualan) * 100 : 0;
+    if (profitMargin >= 20) return { score: profitMargin, label: "Sehat", color: "success" };
+    if (profitMargin >= 10) return { score: profitMargin, label: "Perlu Evaluasi", color: "warning" };
+    return { score: profitMargin, label: "Berisiko", color: "destructive" };
+  }, [currentMonth]);
+
+  const stats = useMemo(() => [
+    { label: "Total Penjualan", value: formatCurrency(currentMonth.penjualan), change: pct(currentMonth.penjualan, prevMonth.penjualan), icon: DollarSign, iconBg: "bg-success", up: true },
+    { label: "Laba Bersih", value: formatCurrency(currentMonth.laba), change: pct(currentMonth.laba, prevMonth.laba), icon: TrendingUp, iconBg: "bg-primary", up: true },
+    { label: "Total Pengeluaran", value: formatCurrency(currentMonth.pembelian + currentMonth.pengeluaran), change: pct(currentMonth.pembelian + currentMonth.pengeluaran, prevMonth.pembelian + prevMonth.pengeluaran), icon: TrendingDown, iconBg: "bg-destructive", up: false },
+    { label: "Kesehatan Usaha", value: health.label, change: `${health.score.toFixed(1)}%`, icon: Activity, iconBg: "bg-warning", up: true },
+  ], [currentMonth, prevMonth, health]);
+
+  const trendData = useMemo(() => monthlySummaries.map((m) => ({
+    month: m.month, Pendapatan: m.penjualan, Laba: m.laba,
+  })), [monthlySummaries]);
+
+  const cashFlowData = useMemo(() => monthlySummaries.map((m) => ({
+    month: m.month, "Kas Masuk": m.penjualan, "Kas Keluar": m.pembelian + m.pengeluaran,
+  })), [monthlySummaries]);
+
   return (
     <AppLayout>
       <div className="mb-6">
@@ -38,7 +40,6 @@ const Index = () => {
         <p className="text-sm text-muted-foreground mt-1">Ringkasan keuangan Veracollection bulan ini</p>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {stats.map((stat, i) => (
           <div key={stat.label} className="glass-card rounded-xl p-5 animate-fade-in" style={{ animationDelay: `${i * 80}ms` }}>
@@ -60,7 +61,6 @@ const Index = () => {
         ))}
       </div>
 
-      {/* Charts side by side */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="glass-card rounded-xl p-5">
           <h3 className="text-sm font-semibold text-foreground mb-4">Tren Pendapatan & Laba</h3>
