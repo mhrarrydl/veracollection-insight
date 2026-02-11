@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import AppLayout from "@/components/AppLayout";
-import { transactions, formatCurrency, products, type Transaction, type TransactionItem } from "@/lib/data";
+import { useData } from "@/context/DataContext";
+import { formatCurrency, type TransactionItem } from "@/lib/data";
 import { Plus, ArrowDownLeft, Search, Trash2, Eye } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -8,12 +9,15 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
+import type { Transaction } from "@/lib/data";
 
 interface LineItem { productId: string; productName: string; qty: string; price: string; }
 const emptyLine = (): LineItem => ({ productId: "", productName: "", qty: "1", price: "" });
 
 export default function PembelianPage() {
-  const [all, setAll] = useState<Transaction[]>(transactions.filter((t) => t.type === "pembelian"));
+  const { transactions, addTransaction, removeTransaction, products } = useData();
+  const pembelian = useMemo(() => transactions.filter((t) => t.type === "pembelian"), [transactions]);
+
   const [search, setSearch] = useState("");
   const [addOpen, setAddOpen] = useState(false);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
@@ -37,13 +41,13 @@ export default function PembelianPage() {
     const items: TransactionItem[] = valid.map((l) => ({ product: l.productName, qty: Number(l.qty), price: Number(l.price) }));
     const total = items.reduce((s, i) => s + i.qty * i.price, 0);
     const tx: Transaction = { id: `T${Date.now()}`, date, type: "pembelian", description: `Pembelian ${items.map((i) => i.product).join(", ")}`, items, amount: total };
-    setAll([tx, ...all]);
+    addTransaction(tx);
     setLines([emptyLine()]);
     setAddOpen(false);
     toast({ title: `Pembelian dicatat — ${formatCurrency(total)}` });
   };
 
-  const filtered = all.filter((tx) => !search || tx.description.toLowerCase().includes(search.toLowerCase()));
+  const filtered = pembelian.filter((tx) => !search || tx.description.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <AppLayout>
@@ -68,7 +72,7 @@ export default function PembelianPage() {
             <span className="text-sm font-bold text-foreground">-{formatCurrency(tx.amount)}</span>
             <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               {tx.items && <Button variant="ghost" size="sm" onClick={() => setDetail(tx)}><Eye className="w-3.5 h-3.5" /></Button>}
-              <Button variant="ghost" size="sm" onClick={() => { setAll((p) => p.filter((t) => t.id !== tx.id)); toast({ title: "Dihapus" }); }}><Trash2 className="w-3.5 h-3.5 text-destructive" /></Button>
+              <Button variant="ghost" size="sm" onClick={() => { removeTransaction(tx.id); toast({ title: "Dihapus" }); }}><Trash2 className="w-3.5 h-3.5 text-destructive" /></Button>
             </div>
           </div>
         ))}
