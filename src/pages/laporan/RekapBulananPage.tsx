@@ -2,15 +2,22 @@ import AppLayout from "@/components/AppLayout";
 import { useData } from "@/context/DataContext";
 import { formatCurrency } from "@/lib/data";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { Button } from "@/components/ui/button";
+import { Printer } from "lucide-react";
 
 export default function RekapBulananPage() {
   const { monthlySummaries } = useData();
 
   return (
     <AppLayout>
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-foreground">Rekapitulasi Bulanan</h2>
-        <p className="text-sm text-muted-foreground mt-1">Ringkasan pendapatan, biaya, dan laba per bulan</p>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-foreground">Rekapitulasi Bulanan</h2>
+          <p className="text-sm text-muted-foreground mt-1">Ringkasan pendapatan, biaya, dan laba per bulan</p>
+        </div>
+        <Button variant="outline" className="gap-2" onClick={() => window.print()}>
+          <Printer className="w-4 h-4" />Export
+        </Button>
       </div>
       <div className="glass-card rounded-xl p-6 mb-6">
         <div className="overflow-x-auto">

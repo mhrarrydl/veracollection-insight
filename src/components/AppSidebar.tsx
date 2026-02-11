@@ -12,6 +12,7 @@ import {
   TrendingUp,
   BarChart3,
   CalendarRange,
+  PieChart,
   Activity,
   LogOut,
   ChevronDown,
@@ -55,6 +56,7 @@ const navGroups: NavGroup[] = [
       { to: "/laporan/arus-kas", icon: TrendingUp, label: "Arus Kas" },
       { to: "/laporan/rekap-bulanan", icon: BarChart3, label: "Rekap Bulanan" },
       { to: "/laporan/rekap-tahunan", icon: CalendarRange, label: "Rekap Tahunan" },
+      { to: "/laporan/rekap-produk", icon: PieChart, label: "Rekap Per Produk" },
     ],
   },
   {

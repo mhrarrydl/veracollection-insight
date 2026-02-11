@@ -78,3 +78,11 @@
     @apply bg-card/80 backdrop-blur-sm border border-border/50 shadow-sm;
   }
 }
+
+@media print {
+  body { background: white !important; }
+  aside, .print\\:hidden, button, nav { display: none !important; }
+  main { margin-left: 0 !important; }
+  .glass-card { box-shadow: none; border: 1px solid #ddd; }
+  .print\\:block { display: block !important; }
+}
