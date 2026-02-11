@@ -53,6 +53,21 @@ export interface MonthlySummary {
   laba: number;
 }
 
+export interface YearlySummary {
+  year: string;
+  penjualan: number;
+  pembelian: number;
+  pengeluaran: number;
+  laba: number;
+}
+
+export const yearlySummaries: YearlySummary[] = [
+  { year: "2022", penjualan: 320000000, pembelian: 145000000, pengeluaran: 120000000, laba: 55000000 },
+  { year: "2023", penjualan: 385000000, pembelian: 168000000, pengeluaran: 138000000, laba: 79000000 },
+  { year: "2024", penjualan: 425000000, pembelian: 182000000, pengeluaran: 148000000, laba: 95000000 },
+  { year: "2025", penjualan: 205700000, pembelian: 87200000, pengeluaran: 71600000, laba: 46900000 },
+];
+
 export const categories: Category[] = [
   { id: "C001", name: "Kain", description: "Bahan kain mentah untuk produksi" },
   { id: "C002", name: "Celana", description: "Produk celana jadi siap jual" },

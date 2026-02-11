@@ -6,12 +6,14 @@ import {
   suppliers as initialSuppliers,
   accounts as initialAccounts,
   monthlySummaries as staticMonthlySummaries,
+  yearlySummaries as initialYearlySummaries,
   type Transaction,
   type Product,
   type Category,
   type Supplier,
   type Account,
   type MonthlySummary,
+  type YearlySummary,
   formatCurrency,
 } from "@/lib/data";
 import { format, parseISO, startOfMonth } from "date-fns";
@@ -33,6 +35,11 @@ interface DataContextType {
   // Accounts
   accounts: Account[];
   setAccounts: React.Dispatch<React.SetStateAction<Account[]>>;
+  // Yearly
+  yearlySummaries: YearlySummary[];
+  addYearlySummary: (ys: YearlySummary) => void;
+  removeYearlySummary: (year: string) => void;
+  updateYearlySummary: (ys: YearlySummary) => void;
   // Computed
   monthlySummaries: MonthlySummary[];
   currentMonth: MonthlySummary;
@@ -53,6 +60,17 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [suppliers, setSuppliers] = useState<Supplier[]>(initialSuppliers);
   const [accounts, setAccounts] = useState<Account[]>(initialAccounts);
+  const [yearlySummaries, setYearlySummaries] = useState<YearlySummary[]>(initialYearlySummaries);
+
+  const addYearlySummary = (ys: YearlySummary) => {
+    setYearlySummaries((prev) => [...prev, ys].sort((a, b) => a.year.localeCompare(b.year)));
+  };
+  const removeYearlySummary = (year: string) => {
+    setYearlySummaries((prev) => prev.filter((y) => y.year !== year));
+  };
+  const updateYearlySummary = (ys: YearlySummary) => {
+    setYearlySummaries((prev) => prev.map((y) => y.year === ys.year ? ys : y));
+  };
 
   const addTransaction = (tx: Transaction) => {
     setTransactions((prev) => [tx, ...prev]);
@@ -142,6 +160,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
         setSuppliers,
         accounts,
         setAccounts,
+        yearlySummaries,
+        addYearlySummary,
+        removeYearlySummary,
+        updateYearlySummary,
         monthlySummaries,
         currentMonth,
         prevMonth,
