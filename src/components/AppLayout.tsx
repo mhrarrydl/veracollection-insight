@@ -5,7 +5,11 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-background">
       <AppSidebar />
-      <main className="ml-[260px] transition-all duration-300">
+      <main className="ml-[240px]">
+        {/* Top bar */}
+        <div className="h-12 border-b border-border flex items-center justify-end px-6">
+          <span className="text-sm text-muted-foreground">Admin Veracollection</span>
+        </div>
         <div className="p-6 lg:p-8 max-w-[1400px]">{children}</div>
       </main>
     </div>
