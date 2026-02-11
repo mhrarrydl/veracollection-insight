@@ -3,10 +3,36 @@ import { format, subDays, subMonths } from "date-fns";
 export interface Product {
   id: string;
   name: string;
-  category: "kain" | "celana";
+  category: string;
   price: number;
   stock: number;
   supplier: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  description: string;
+}
+
+export interface Supplier {
+  id: string;
+  name: string;
+  contact: string;
+  address: string;
+}
+
+export interface Account {
+  id: string;
+  name: string;
+  type: string;
+  balance: number;
+}
+
+export interface TransactionItem {
+  product: string;
+  qty: number;
+  price: number;
 }
 
 export interface Transaction {
@@ -14,7 +40,7 @@ export interface Transaction {
   date: string;
   type: "penjualan" | "pembelian" | "pengeluaran";
   description: string;
-  items?: { product: string; qty: number; price: number }[];
+  items?: TransactionItem[];
   amount: number;
   category?: string;
 }
@@ -27,24 +53,30 @@ export interface MonthlySummary {
   laba: number;
 }
 
-export const products: Product[] = [
-  { id: "P001", name: "Kain Katun Premium", category: "kain", price: 85000, stock: 150, supplier: "PT Tekstil Jaya" },
-  { id: "P002", name: "Kain Denim Stretch", category: "kain", price: 120000, stock: 80, supplier: "CV Denim Indo" },
-  { id: "P003", name: "Celana Chino Slim", category: "celana", price: 189000, stock: 45, supplier: "Produksi Sendiri" },
-  { id: "P004", name: "Celana Jogger Premium", category: "celana", price: 165000, stock: 60, supplier: "Produksi Sendiri" },
-  { id: "P005", name: "Kain Linen Import", category: "kain", price: 210000, stock: 35, supplier: "PT Asia Fabric" },
-  { id: "P006", name: "Celana Cargo Tactical", category: "celana", price: 225000, stock: 30, supplier: "Produksi Sendiri" },
-  { id: "P007", name: "Kain Twill Cotton", category: "kain", price: 95000, stock: 100, supplier: "PT Tekstil Jaya" },
-  { id: "P008", name: "Celana Palazzo Wide", category: "celana", price: 175000, stock: 40, supplier: "Produksi Sendiri" },
+export const categories: Category[] = [
+  { id: "C001", name: "Kain", description: "Bahan kain mentah untuk produksi" },
+  { id: "C002", name: "Celana", description: "Produk celana jadi siap jual" },
+  { id: "C003", name: "Aksesoris", description: "Aksesoris pelengkap produk" },
 ];
 
-export const suppliers = [
+export const products: Product[] = [
+  { id: "P001", name: "Kain Katun Premium", category: "Kain", price: 85000, stock: 150, supplier: "PT Tekstil Jaya" },
+  { id: "P002", name: "Kain Denim Stretch", category: "Kain", price: 120000, stock: 80, supplier: "CV Denim Indo" },
+  { id: "P003", name: "Celana Chino Slim", category: "Celana", price: 189000, stock: 45, supplier: "Produksi Sendiri" },
+  { id: "P004", name: "Celana Jogger Premium", category: "Celana", price: 165000, stock: 60, supplier: "Produksi Sendiri" },
+  { id: "P005", name: "Kain Linen Import", category: "Kain", price: 210000, stock: 35, supplier: "PT Asia Fabric" },
+  { id: "P006", name: "Celana Cargo Tactical", category: "Celana", price: 225000, stock: 30, supplier: "Produksi Sendiri" },
+  { id: "P007", name: "Kain Twill Cotton", category: "Kain", price: 95000, stock: 100, supplier: "PT Tekstil Jaya" },
+  { id: "P008", name: "Celana Palazzo Wide", category: "Celana", price: 175000, stock: 40, supplier: "Produksi Sendiri" },
+];
+
+export const suppliers: Supplier[] = [
   { id: "S001", name: "PT Tekstil Jaya", contact: "081234567890", address: "Bandung" },
   { id: "S002", name: "CV Denim Indo", contact: "081298765432", address: "Surabaya" },
   { id: "S003", name: "PT Asia Fabric", contact: "082112345678", address: "Jakarta" },
 ];
 
-export const accounts = [
+export const accounts: Account[] = [
   { id: "A001", name: "Kas", type: "aset", balance: 45000000 },
   { id: "A002", name: "Modal", type: "ekuitas", balance: 100000000 },
   { id: "A003", name: "Persediaan Barang", type: "aset", balance: 32000000 },
@@ -52,6 +84,8 @@ export const accounts = [
   { id: "A005", name: "Beban Operasional", type: "beban", balance: 0 },
   { id: "A006", name: "Pendapatan Penjualan", type: "pendapatan", balance: 0 },
 ];
+
+export const expenseCategories = ["Gaji", "Listrik", "Transportasi", "Sewa", "Operasional", "Lainnya"];
 
 const today = new Date();
 
@@ -84,7 +118,6 @@ export function formatCurrency(amount: number): string {
 export function getHealthScore(): { score: number; label: string; color: string } {
   const latest = monthlySummaries[monthlySummaries.length - 1];
   const profitMargin = (latest.laba / latest.penjualan) * 100;
-
   if (profitMargin >= 20) return { score: profitMargin, label: "Sehat", color: "success" };
   if (profitMargin >= 10) return { score: profitMargin, label: "Perlu Evaluasi", color: "warning" };
   return { score: profitMargin, label: "Berisiko", color: "destructive" };
