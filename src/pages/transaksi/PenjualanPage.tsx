@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import AppLayout from "@/components/AppLayout";
-import { transactions, formatCurrency, products, type Transaction, type TransactionItem } from "@/lib/data";
-import { cn } from "@/lib/utils";
+import { useData } from "@/context/DataContext";
+import { formatCurrency, type Transaction, type TransactionItem } from "@/lib/data";
 import { Plus, ArrowUpRight, Search, Trash2, Eye } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,9 @@ interface LineItem { productId: string; productName: string; qty: string; price:
 const emptyLine = (): LineItem => ({ productId: "", productName: "", qty: "1", price: "" });
 
 export default function PenjualanPage() {
-  const [all, setAll] = useState<Transaction[]>(transactions.filter((t) => t.type === "penjualan"));
+  const { transactions, addTransaction, removeTransaction, products } = useData();
+  const penjualan = useMemo(() => transactions.filter((t) => t.type === "penjualan"), [transactions]);
+
   const [search, setSearch] = useState("");
   const [addOpen, setAddOpen] = useState(false);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
@@ -38,13 +40,13 @@ export default function PenjualanPage() {
     const items: TransactionItem[] = valid.map((l) => ({ product: l.productName, qty: Number(l.qty), price: Number(l.price) }));
     const total = items.reduce((s, i) => s + i.qty * i.price, 0);
     const tx: Transaction = { id: `T${Date.now()}`, date, type: "penjualan", description: `Penjualan ${items.map((i) => i.product).join(", ")}`, items, amount: total };
-    setAll([tx, ...all]);
+    addTransaction(tx);
     setLines([emptyLine()]);
     setAddOpen(false);
     toast({ title: `Penjualan dicatat — ${formatCurrency(total)}` });
   };
 
-  const filtered = all.filter((tx) => !search || tx.description.toLowerCase().includes(search.toLowerCase()));
+  const filtered = penjualan.filter((tx) => !search || tx.description.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <AppLayout>
@@ -69,14 +71,13 @@ export default function PenjualanPage() {
             <span className="text-sm font-bold text-success">+{formatCurrency(tx.amount)}</span>
             <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               {tx.items && <Button variant="ghost" size="sm" onClick={() => setDetail(tx)}><Eye className="w-3.5 h-3.5" /></Button>}
-              <Button variant="ghost" size="sm" onClick={() => { setAll((p) => p.filter((t) => t.id !== tx.id)); toast({ title: "Dihapus" }); }}><Trash2 className="w-3.5 h-3.5 text-destructive" /></Button>
+              <Button variant="ghost" size="sm" onClick={() => { removeTransaction(tx.id); toast({ title: "Dihapus" }); }}><Trash2 className="w-3.5 h-3.5 text-destructive" /></Button>
             </div>
           </div>
         ))}
         {!filtered.length && <div className="p-8 text-center text-muted-foreground text-sm">Belum ada penjualan.</div>}
       </div>
 
-      {/* Add dialog */}
       <Dialog open={addOpen} onOpenChange={setAddOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader><DialogTitle>Tambah Penjualan</DialogTitle></DialogHeader>
@@ -106,7 +107,6 @@ export default function PenjualanPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Detail dialog */}
       <Dialog open={!!detail} onOpenChange={() => setDetail(null)}>
         <DialogContent>
           <DialogHeader><DialogTitle>Detail {detail?.id}</DialogTitle></DialogHeader>
