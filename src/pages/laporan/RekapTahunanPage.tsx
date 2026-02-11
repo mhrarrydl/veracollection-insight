@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Printer } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 export default function RekapTahunanPage() {
@@ -72,9 +72,14 @@ export default function RekapTahunanPage() {
           <h2 className="text-2xl font-bold text-foreground">Rekapitulasi Tahunan</h2>
           <p className="text-sm text-muted-foreground mt-1">Ringkasan pendapatan, biaya, dan laba per tahun</p>
         </div>
-        <Button className="gap-2" onClick={openAdd}>
-          <Plus className="w-4 h-4" />Tambah Rekap Tahun
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button variant="outline" className="gap-2" onClick={() => window.print()}>
+            <Printer className="w-4 h-4" />Export
+          </Button>
+          <Button className="gap-2" onClick={openAdd}>
+            <Plus className="w-4 h-4" />Tambah Rekap Tahun
+          </Button>
+        </div>
       </div>
 
       {/* Table */}

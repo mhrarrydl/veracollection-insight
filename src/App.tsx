@@ -16,6 +16,7 @@ import LabaRugiPage from "./pages/laporan/LabaRugiPage";
 import ArusKasPage from "./pages/laporan/ArusKasPage";
 import RekapBulananPage from "./pages/laporan/RekapBulananPage";
 import RekapTahunanPage from "./pages/laporan/RekapTahunanPage";
+import RekapProdukPage from "./pages/laporan/RekapProdukPage";
 import HealthAnalysis from "./pages/HealthAnalysis";
 import NotFound from "./pages/NotFound";
 
@@ -45,6 +46,7 @@ const App = () => (
           <Route path="/laporan/arus-kas" element={<ArusKasPage />} />
           <Route path="/laporan/rekap-bulanan" element={<RekapBulananPage />} />
           <Route path="/laporan/rekap-tahunan" element={<RekapTahunanPage />} />
+          <Route path="/laporan/rekap-produk" element={<RekapProdukPage />} />
           {/* Analisis */}
           <Route path="/analisis" element={<HealthAnalysis />} />
           {/* Catch-all */}

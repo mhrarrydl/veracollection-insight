@@ -96,6 +96,19 @@ export function DataProvider({ children }: { children: ReactNode }) {
         return acc;
       })
     );
+
+    // Update product stock
+    if (tx.items) {
+      setProducts((prev) =>
+        prev.map((p) => {
+          const item = tx.items?.find((i) => i.product === p.name);
+          if (!item) return p;
+          if (tx.type === "penjualan") return { ...p, stock: Math.max(0, p.stock - item.qty) };
+          if (tx.type === "pembelian") return { ...p, stock: p.stock + item.qty };
+          return p;
+        })
+      );
+    }
   };
 
   const removeTransaction = (id: string) => {
@@ -112,6 +125,18 @@ export function DataProvider({ children }: { children: ReactNode }) {
           return acc;
         })
       );
+      // Reverse product stock
+      if (tx.items) {
+        setProducts((prev) =>
+          prev.map((p) => {
+            const item = tx.items?.find((i) => i.product === p.name);
+            if (!item) return p;
+            if (tx.type === "penjualan") return { ...p, stock: p.stock + item.qty };
+            if (tx.type === "pembelian") return { ...p, stock: Math.max(0, p.stock - item.qty) };
+            return p;
+          })
+        );
+      }
     }
     setTransactions((prev) => prev.filter((t) => t.id !== id));
   };
