@@ -1,8 +1,9 @@
 import AppLayout from "@/components/AppLayout";
-import { monthlySummaries, formatCurrency } from "@/lib/data";
+import { useData } from "@/context/DataContext";
+import { formatCurrency } from "@/lib/data";
 
 export default function LabaRugiPage() {
-  const latest = monthlySummaries[monthlySummaries.length - 1];
+  const { currentMonth: latest } = useData();
   const totalBiaya = latest.pembelian + latest.pengeluaran;
 
   return (
