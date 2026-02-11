@@ -11,6 +11,7 @@ import {
   FileText,
   TrendingUp,
   BarChart3,
+  CalendarRange,
   Activity,
   LogOut,
   ChevronDown,
@@ -53,6 +54,7 @@ const navGroups: NavGroup[] = [
       { to: "/laporan/laba-rugi", icon: FileText, label: "Laba Rugi" },
       { to: "/laporan/arus-kas", icon: TrendingUp, label: "Arus Kas" },
       { to: "/laporan/rekap-bulanan", icon: BarChart3, label: "Rekap Bulanan" },
+      { to: "/laporan/rekap-tahunan", icon: CalendarRange, label: "Rekap Tahunan" },
     ],
   },
   {
