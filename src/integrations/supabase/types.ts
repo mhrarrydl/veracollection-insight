@@ -14,7 +14,150 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      accounts: {
+        Row: {
+          balance: number
+          id: string
+          name: string
+          type: string
+        }
+        Insert: {
+          balance?: number
+          id: string
+          name: string
+          type?: string
+        }
+        Update: {
+          balance?: number
+          id?: string
+          name?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      categories: {
+        Row: {
+          description: string
+          id: string
+          name: string
+        }
+        Insert: {
+          description?: string
+          id: string
+          name: string
+        }
+        Update: {
+          description?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          category: string
+          id: string
+          name: string
+          price: number
+          stock: number
+          supplier: string
+        }
+        Insert: {
+          category?: string
+          id: string
+          name: string
+          price?: number
+          stock?: number
+          supplier?: string
+        }
+        Update: {
+          category?: string
+          id?: string
+          name?: string
+          price?: number
+          stock?: number
+          supplier?: string
+        }
+        Relationships: []
+      }
+      suppliers: {
+        Row: {
+          address: string
+          contact: string
+          id: string
+          name: string
+        }
+        Insert: {
+          address?: string
+          contact?: string
+          id: string
+          name: string
+        }
+        Update: {
+          address?: string
+          contact?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount: number
+          category: string | null
+          created_at: string
+          date: string
+          description: string
+          id: string
+          items: Json | null
+          type: string
+        }
+        Insert: {
+          amount?: number
+          category?: string | null
+          created_at?: string
+          date: string
+          description?: string
+          id: string
+          items?: Json | null
+          type: string
+        }
+        Update: {
+          amount?: number
+          category?: string | null
+          created_at?: string
+          date?: string
+          description?: string
+          id?: string
+          items?: Json | null
+          type?: string
+        }
+        Relationships: []
+      }
+      yearly_summaries: {
+        Row: {
+          laba: number
+          pembelian: number
+          pengeluaran: number
+          penjualan: number
+          year: string
+        }
+        Insert: {
+          laba?: number
+          pembelian?: number
+          pengeluaran?: number
+          penjualan?: number
+          year: string
+        }
+        Update: {
+          laba?: number
+          pembelian?: number
+          pengeluaran?: number
+          penjualan?: number
+          year?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

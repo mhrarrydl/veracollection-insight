@@ -1,6 +1,7 @@
 import { useState } from "react";
 import AppLayout from "@/components/AppLayout";
-import { accounts as initialAccounts, formatCurrency, type Account } from "@/lib/data";
+import { useData } from "@/context/DataContext";
+import { formatCurrency, type Account } from "@/lib/data";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,19 +11,19 @@ import { Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 export default function AkunPage() {
-  const [list, setList] = useState<Account[]>(initialAccounts);
+  const { accounts, addAccount, updateAccount, removeAccount } = useData();
   const [open, setOpen] = useState(false);
   const [edit, setEdit] = useState<Account | null>(null);
   const [form, setForm] = useState({ name: "", type: "aset", balance: "0" });
 
   const openAdd = () => { setEdit(null); setForm({ name: "", type: "aset", balance: "0" }); setOpen(true); };
   const openEdit = (a: Account) => { setEdit(a); setForm({ name: a.name, type: a.type, balance: String(a.balance) }); setOpen(true); };
-  const save = () => {
-    if (edit) { setList((prev) => prev.map((a) => a.id === edit.id ? { ...a, name: form.name, type: form.type, balance: Number(form.balance) } : a)); toast({ title: "Akun diperbarui" }); }
-    else { setList((prev) => [...prev, { id: `A${String(prev.length + 1).padStart(3, "0")}`, name: form.name, type: form.type, balance: Number(form.balance) }]); toast({ title: "Akun ditambahkan" }); }
+  const save = async () => {
+    if (edit) { await updateAccount({ ...edit, name: form.name, type: form.type, balance: Number(form.balance) }); toast({ title: "Akun diperbarui" }); }
+    else { await addAccount({ id: `A${Date.now()}`, name: form.name, type: form.type, balance: Number(form.balance) }); toast({ title: "Akun ditambahkan" }); }
     setOpen(false);
   };
-  const remove = (id: string) => { setList((prev) => prev.filter((a) => a.id !== id)); toast({ title: "Akun dihapus" }); };
+  const remove = async (id: string) => { await removeAccount(id); toast({ title: "Akun dihapus" }); };
 
   return (
     <AppLayout>
@@ -40,7 +41,7 @@ export default function AkunPage() {
             <th className="text-center py-3 px-4 font-semibold text-muted-foreground">Aksi</th>
           </tr></thead>
           <tbody>
-            {list.map((a) => (
+            {accounts.map((a) => (
               <tr key={a.id} className="border-b border-border/50 hover:bg-muted/30">
                 <td className="py-3 px-4 text-muted-foreground font-mono text-xs">{a.id}</td>
                 <td className="py-3 px-4 font-medium text-foreground">{a.name}</td>

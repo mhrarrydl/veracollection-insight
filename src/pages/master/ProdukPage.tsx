@@ -1,6 +1,7 @@
 import { useState } from "react";
 import AppLayout from "@/components/AppLayout";
-import { products as initialProducts, categories, suppliers as supplierList, formatCurrency, type Product } from "@/lib/data";
+import { useData } from "@/context/DataContext";
+import { formatCurrency, type Product } from "@/lib/data";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,24 +11,24 @@ import { Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 export default function ProdukPage() {
-  const [productList, setProductList] = useState<Product[]>(initialProducts);
+  const { products, addProduct, updateProduct, removeProduct, categories, suppliers } = useData();
   const [open, setOpen] = useState(false);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
   const [form, setForm] = useState({ name: "", category: "", price: "", stock: "", supplier: "" });
 
   const openAdd = () => { setEditProduct(null); setForm({ name: "", category: categories[0]?.name || "", price: "", stock: "", supplier: "" }); setOpen(true); };
   const openEdit = (p: Product) => { setEditProduct(p); setForm({ name: p.name, category: p.category, price: String(p.price), stock: String(p.stock), supplier: p.supplier }); setOpen(true); };
-  const save = () => {
+  const save = async () => {
     if (editProduct) {
-      setProductList((prev) => prev.map((p) => p.id === editProduct.id ? { ...p, ...form, price: Number(form.price), stock: Number(form.stock) } : p));
+      await updateProduct({ ...editProduct, ...form, price: Number(form.price), stock: Number(form.stock) });
       toast({ title: "Produk diperbarui" });
     } else {
-      setProductList((prev) => [...prev, { id: `P${String(prev.length + 1).padStart(3, "0")}`, name: form.name, category: form.category, price: Number(form.price), stock: Number(form.stock), supplier: form.supplier }]);
+      await addProduct({ id: `P${Date.now()}`, name: form.name, category: form.category, price: Number(form.price), stock: Number(form.stock), supplier: form.supplier });
       toast({ title: "Produk ditambahkan" });
     }
     setOpen(false);
   };
-  const remove = (id: string) => { setProductList((prev) => prev.filter((p) => p.id !== id)); toast({ title: "Produk dihapus" }); };
+  const remove = async (id: string) => { await removeProduct(id); toast({ title: "Produk dihapus" }); };
 
   return (
     <AppLayout>
@@ -53,7 +54,7 @@ export default function ProdukPage() {
             </tr>
           </thead>
           <tbody>
-            {productList.map((p) => (
+            {products.map((p) => (
               <tr key={p.id} className="border-b border-border/50 hover:bg-muted/30">
                 <td className="py-3 px-4 text-muted-foreground font-mono text-xs">{p.id}</td>
                 <td className="py-3 px-4 font-medium text-foreground">{p.name}</td>
@@ -90,7 +91,7 @@ export default function ProdukPage() {
               <Select value={form.supplier} onValueChange={(v) => setForm({ ...form, supplier: v })}>
                 <SelectTrigger><SelectValue placeholder="Pilih Supplier" /></SelectTrigger>
                 <SelectContent>
-                  {supplierList.map((s) => <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>)}
+                  {suppliers.map((s) => <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>)}
                   <SelectItem value="Produksi Sendiri">Produksi Sendiri</SelectItem>
                 </SelectContent>
               </Select>
