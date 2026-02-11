@@ -1,6 +1,7 @@
 import { useState } from "react";
 import AppLayout from "@/components/AppLayout";
-import { categories as initialCategories, products, type Category } from "@/lib/data";
+import { useData } from "@/context/DataContext";
+import { type Category } from "@/lib/data";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,19 +10,19 @@ import { Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 export default function KategoriPage() {
-  const [list, setList] = useState<Category[]>(initialCategories);
+  const { categories, addCategory, updateCategory, removeCategory, products } = useData();
   const [open, setOpen] = useState(false);
   const [edit, setEdit] = useState<Category | null>(null);
   const [form, setForm] = useState({ name: "", description: "" });
 
   const openAdd = () => { setEdit(null); setForm({ name: "", description: "" }); setOpen(true); };
   const openEdit = (c: Category) => { setEdit(c); setForm({ name: c.name, description: c.description }); setOpen(true); };
-  const save = () => {
-    if (edit) { setList((prev) => prev.map((c) => c.id === edit.id ? { ...c, ...form } : c)); toast({ title: "Kategori diperbarui" }); }
-    else { setList((prev) => [...prev, { id: `C${String(prev.length + 1).padStart(3, "0")}`, ...form }]); toast({ title: "Kategori ditambahkan" }); }
+  const save = async () => {
+    if (edit) { await updateCategory({ ...edit, ...form }); toast({ title: "Kategori diperbarui" }); }
+    else { await addCategory({ id: `C${Date.now()}`, ...form }); toast({ title: "Kategori ditambahkan" }); }
     setOpen(false);
   };
-  const remove = (id: string) => { setList((prev) => prev.filter((c) => c.id !== id)); toast({ title: "Kategori dihapus" }); };
+  const remove = async (id: string) => { await removeCategory(id); toast({ title: "Kategori dihapus" }); };
 
   return (
     <AppLayout>
@@ -30,7 +31,7 @@ export default function KategoriPage() {
         <Button className="gap-2" onClick={openAdd}><Plus className="w-4 h-4" />Tambah Kategori</Button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {list.map((c) => (
+        {categories.map((c) => (
           <div key={c.id} className="glass-card rounded-xl p-5">
             <div className="flex items-start justify-between mb-2">
               <div><span className="text-xs text-muted-foreground font-mono">{c.id}</span><h4 className="text-sm font-bold text-foreground">{c.name}</h4></div>
