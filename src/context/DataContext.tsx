@@ -291,10 +291,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const monthlySummaries = useMemo(() => {
     const summaryMap = new Map<string, MonthlySummary>();
 
-    // Use static data as base for months without transactions
-    staticMonthlySummaries.forEach((m) => summaryMap.set(m.month, { ...m }));
-
-    // Build from actual transactions
+    // Build purely from actual transactions in database
     transactions.forEach((tx) => {
       const monthKey = format(parseISO(tx.date), "MMM yyyy");
       if (!summaryMap.has(monthKey)) {
