@@ -16,6 +16,8 @@ import {
   Activity,
   LogOut,
   ChevronDown,
+  Shield,
+  Clock,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -48,6 +50,7 @@ const navGroups: NavGroup[] = [
       { to: "/transaksi/penjualan", icon: ShoppingCart, label: "Penjualan" },
       { to: "/transaksi/pembelian", icon: ShoppingBag, label: "Pembelian" },
       { to: "/transaksi/pengeluaran", icon: Receipt, label: "Pengeluaran" },
+      { to: "/transaksi/pengeluaran-harian", icon: Clock, label: "Pengeluaran Harian" },
     ],
   },
   {
@@ -58,6 +61,12 @@ const navGroups: NavGroup[] = [
       { to: "/laporan/rekap-bulanan", icon: BarChart3, label: "Rekap Bulanan" },
       { to: "/laporan/rekap-tahunan", icon: CalendarRange, label: "Rekap Tahunan" },
       { to: "/laporan/rekap-produk", icon: PieChart, label: "Rekap Per Produk" },
+    ],
+  },
+  {
+    label: "KEUANGAN",
+    items: [
+      { to: "/dana-darurat", icon: Shield, label: "Dana Darurat" },
     ],
   },
   {
