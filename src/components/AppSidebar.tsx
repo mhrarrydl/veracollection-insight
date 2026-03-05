@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import veraLogo from "@/assets/vera-logo.png";
 
 interface NavGroup {
   label: string;
@@ -80,13 +81,12 @@ export default function AppSidebar() {
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-[240px] bg-sidebar text-sidebar-foreground border-r border-sidebar-border flex flex-col overflow-hidden">
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-sidebar-border">
-        <h1 className="text-lg font-bold text-sidebar-accent-foreground">
-          Vera<span className="text-sidebar-primary">collection</span>
-        </h1>
-        <p className="text-[11px] text-sidebar-foreground/50 mt-0.5">
-          Sistem Informasi Keuangan
-        </p>
+      <div className="px-5 py-4 border-b border-sidebar-border flex items-center gap-3">
+        <img src={veraLogo} alt="Vera Collection" className="h-10 w-auto" />
+        <div>
+          <h1 className="text-sm font-bold text-sidebar-accent-foreground leading-tight">Vera Collection</h1>
+          <p className="text-[10px] text-sidebar-foreground/50">Sistem Informasi Keuangan</p>
+        </div>
       </div>
 
       {/* Nav */}
