@@ -67,7 +67,7 @@ export default function PembelianPage() {
             <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 text-info bg-info/10"><ArrowDownLeft className="w-5 h-5" /></div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-foreground">{tx.description}</p>
-              <p className="text-xs text-muted-foreground">{tx.date}{tx.items && ` • ${tx.items.length} item`}</p>
+              <p className="text-xs text-muted-foreground">{tx.date}{tx.items && ` • ${tx.items.length} item`}{tx.items && tx.items[0] && (() => { const prod = products.find(p => p.name === tx.items![0].product); return prod ? ` • ${prod.category}` : ''; })()}</p>
             </div>
             <span className="text-sm font-bold text-foreground">-{formatCurrency(tx.amount)}</span>
             <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -89,7 +89,7 @@ export default function PembelianPage() {
                 <div className="flex-1"><Label className="text-xs">Produk/Barang</Label>
                   <Select value={line.productId} onValueChange={(v) => updateLine(idx, "productId", v)}>
                     <SelectTrigger><SelectValue placeholder="Pilih" /></SelectTrigger>
-                    <SelectContent>{products.map((p) => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}</SelectContent>
+                    <SelectContent>{products.map((p) => <SelectItem key={p.id} value={p.id}>{p.name} <span className="text-muted-foreground ml-1">({p.category})</span></SelectItem>)}</SelectContent>
                   </Select>
                 </div>
                 <div className="w-20"><Label className="text-xs">Qty</Label><Input type="number" min="1" value={line.qty} onChange={(e) => updateLine(idx, "qty", e.target.value)} /></div>

@@ -100,7 +100,7 @@ export const accounts: Account[] = [
   { id: "A006", name: "Pendapatan Penjualan", type: "pendapatan", balance: 0 },
 ];
 
-export const expenseCategories = ["Gaji", "Listrik", "Transportasi", "Sewa", "Operasional", "Lainnya"];
+export const expenseCategories = ["Operasional", "Modal"];
 
 const today = new Date();
 

@@ -16,59 +16,78 @@ import {
   Activity,
   LogOut,
   ChevronDown,
+  Shield,
+  Clock,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
+import veraLogo from "@/assets/vera-logo.png";
+
+interface NavItem {
+  to: string;
+  icon: React.ElementType;
+  label: string;
+  ownerOnly?: boolean;
+}
 
 interface NavGroup {
   label: string;
-  items: { to: string; icon: React.ElementType; label: string }[];
+  items: NavItem[];
 }
 
 const navGroups: NavGroup[] = [
   {
     label: "MENU UTAMA",
     items: [
-      { to: "/", icon: LayoutDashboard, label: "Dashboard" },
+      { to: "/", icon: LayoutDashboard, label: "Dashboard", ownerOnly: true },
     ],
   },
   {
     label: "MASTER DATA",
     items: [
       { to: "/master-data/produk", icon: Package, label: "Produk" },
-      { to: "/master-data/kategori", icon: Tags, label: "Kategori" },
-      { to: "/master-data/supplier", icon: Truck, label: "Supplier" },
-      { to: "/master-data/akun", icon: Wallet, label: "Akun Keuangan" },
+      { to: "/master-data/kategori", icon: Tags, label: "Kategori", ownerOnly: true },
+      { to: "/master-data/supplier", icon: Truck, label: "Supplier", ownerOnly: true },
+      { to: "/master-data/akun", icon: Wallet, label: "Akun Keuangan", ownerOnly: true },
     ],
   },
   {
     label: "TRANSAKSI",
     items: [
       { to: "/transaksi/penjualan", icon: ShoppingCart, label: "Penjualan" },
-      { to: "/transaksi/pembelian", icon: ShoppingBag, label: "Pembelian" },
-      { to: "/transaksi/pengeluaran", icon: Receipt, label: "Pengeluaran" },
+      { to: "/transaksi/pembelian", icon: ShoppingBag, label: "Pembelian", ownerOnly: true },
+      { to: "/transaksi/pengeluaran", icon: Receipt, label: "Pengeluaran", ownerOnly: true },
+      { to: "/transaksi/pengeluaran-harian", icon: Clock, label: "Pengeluaran Harian", ownerOnly: true },
     ],
   },
   {
     label: "LAPORAN",
     items: [
-      { to: "/laporan/laba-rugi", icon: FileText, label: "Laba Rugi" },
-      { to: "/laporan/arus-kas", icon: TrendingUp, label: "Arus Kas" },
-      { to: "/laporan/rekap-bulanan", icon: BarChart3, label: "Rekap Bulanan" },
-      { to: "/laporan/rekap-tahunan", icon: CalendarRange, label: "Rekap Tahunan" },
-      { to: "/laporan/rekap-produk", icon: PieChart, label: "Rekap Per Produk" },
+      { to: "/laporan/laba-rugi", icon: FileText, label: "Laba Rugi", ownerOnly: true },
+      { to: "/laporan/arus-kas", icon: TrendingUp, label: "Arus Kas", ownerOnly: true },
+      { to: "/laporan/rekap-bulanan", icon: BarChart3, label: "Rekap Bulanan", ownerOnly: true },
+      { to: "/laporan/rekap-tahunan", icon: CalendarRange, label: "Rekap Tahunan", ownerOnly: true },
+      { to: "/laporan/rekap-produk", icon: PieChart, label: "Rekap Per Produk", ownerOnly: true },
+    ],
+  },
+  {
+    label: "KEUANGAN",
+    items: [
+      { to: "/dana-darurat", icon: Shield, label: "Dana Darurat", ownerOnly: true },
     ],
   },
   {
     label: "ANALISIS",
     items: [
-      { to: "/analisis", icon: Activity, label: "Kesehatan Usaha" },
+      { to: "/analisis", icon: Activity, label: "Kesehatan Usaha", ownerOnly: true },
     ],
   },
 ];
 
 export default function AppSidebar() {
   const location = useLocation();
+  const { role, signOut, user } = useAuth();
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(
     Object.fromEntries(navGroups.map((g) => [g.label, true]))
   );
@@ -77,23 +96,29 @@ export default function AppSidebar() {
     setOpenGroups((prev) => ({ ...prev, [label]: !prev[label] }));
   };
 
+  // Filter groups/items based on role
+  const filteredGroups = navGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => !item.ownerOnly || role === "owner"),
+    }))
+    .filter((group) => group.items.length > 0);
+
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-[240px] bg-sidebar text-sidebar-foreground border-r border-sidebar-border flex flex-col overflow-hidden">
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-sidebar-border">
-        <h1 className="text-lg font-bold text-sidebar-accent-foreground">
-          Vera<span className="text-sidebar-primary">collection</span>
-        </h1>
-        <p className="text-[11px] text-sidebar-foreground/50 mt-0.5">
-          Sistem Informasi Keuangan
-        </p>
+      <div className="px-5 py-4 border-b border-sidebar-border flex items-center gap-3">
+        <img src={veraLogo} alt="Vera Collection" className="h-10 w-auto" />
+        <div>
+          <h1 className="text-sm font-bold text-sidebar-accent-foreground leading-tight">Vera Collection</h1>
+          <p className="text-[10px] text-sidebar-foreground/50">Sistem Informasi Keuangan</p>
+        </div>
       </div>
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-1">
-        {navGroups.map((group) => {
+        {filteredGroups.map((group) => {
           const isOpen = openGroups[group.label] ?? true;
-          const hasActive = group.items.some((item) => location.pathname === item.to);
 
           return (
             <div key={group.label} className="mb-1">
@@ -137,9 +162,18 @@ export default function AppSidebar() {
         })}
       </nav>
 
-      {/* Logout */}
-      <div className="px-3 pb-4">
-        <button className="flex items-center gap-3 px-3 py-2 w-full rounded-lg text-sm text-sidebar-foreground/60 hover:bg-sidebar-accent/30 hover:text-sidebar-accent-foreground transition-colors">
+      {/* User info + Logout */}
+      <div className="px-3 pb-4 space-y-2">
+        {user && (
+          <div className="px-3 py-1.5">
+            <p className="text-xs text-sidebar-foreground/60 truncate">{user.email}</p>
+            <p className="text-[10px] text-sidebar-foreground/40 capitalize">{role || "..."}</p>
+          </div>
+        )}
+        <button
+          onClick={signOut}
+          className="flex items-center gap-3 px-3 py-2 w-full rounded-lg text-sm text-sidebar-foreground/60 hover:bg-sidebar-accent/30 hover:text-sidebar-accent-foreground transition-colors"
+        >
           <LogOut className="w-4 h-4" />
           <span>Keluar</span>
         </button>
