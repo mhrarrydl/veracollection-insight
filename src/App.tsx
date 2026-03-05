@@ -12,12 +12,14 @@ import AkunPage from "./pages/master/AkunPage";
 import PenjualanPage from "./pages/transaksi/PenjualanPage";
 import PembelianPage from "./pages/transaksi/PembelianPage";
 import PengeluaranPage from "./pages/transaksi/PengeluaranPage";
+import PengeluaranHarianPage from "./pages/transaksi/PengeluaranHarianPage";
 import LabaRugiPage from "./pages/laporan/LabaRugiPage";
 import ArusKasPage from "./pages/laporan/ArusKasPage";
 import RekapBulananPage from "./pages/laporan/RekapBulananPage";
 import RekapTahunanPage from "./pages/laporan/RekapTahunanPage";
 import RekapProdukPage from "./pages/laporan/RekapProdukPage";
 import HealthAnalysis from "./pages/HealthAnalysis";
+import DanaDaruratPage from "./pages/DanaDaruratPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +43,7 @@ const App = () => (
           <Route path="/transaksi/penjualan" element={<PenjualanPage />} />
           <Route path="/transaksi/pembelian" element={<PembelianPage />} />
           <Route path="/transaksi/pengeluaran" element={<PengeluaranPage />} />
+          <Route path="/transaksi/pengeluaran-harian" element={<PengeluaranHarianPage />} />
           {/* Laporan */}
           <Route path="/laporan/laba-rugi" element={<LabaRugiPage />} />
           <Route path="/laporan/arus-kas" element={<ArusKasPage />} />
@@ -49,6 +52,8 @@ const App = () => (
           <Route path="/laporan/rekap-produk" element={<RekapProdukPage />} />
           {/* Analisis */}
           <Route path="/analisis" element={<HealthAnalysis />} />
+          {/* Dana Darurat */}
+          <Route path="/dana-darurat" element={<DanaDaruratPage />} />
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
         </Routes>
