@@ -107,8 +107,8 @@ export default function AppSidebar() {
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-[240px] bg-sidebar text-sidebar-foreground border-r border-sidebar-border flex flex-col overflow-hidden">
       {/* Logo */}
-      <div className="px-5 py-4 border-b border-sidebar-border flex items-center gap-3">
-        <img src={veraLogo} alt="Vera Collection" className="h-10 w-auto" />
+      <div className="px-5 py-5 border-b border-sidebar-border flex items-center justify-center">
+        <img src={veraLogo} alt="Vera Collection" className="h-14 w-auto object-contain" />
       </div>
 
       {/* Nav */}
