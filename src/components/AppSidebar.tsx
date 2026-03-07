@@ -109,10 +109,6 @@ export default function AppSidebar() {
       {/* Logo */}
       <div className="px-5 py-4 border-b border-sidebar-border flex items-center gap-3">
         <img src={veraLogo} alt="Vera Collection" className="h-10 w-auto" />
-        <div>
-          <h1 className="text-sm font-bold text-sidebar-accent-foreground leading-tight">Vera Collection</h1>
-          <p className="text-[10px] text-sidebar-foreground/50">Sistem Informasi Keuangan</p>
-        </div>
       </div>
 
       {/* Nav */}
