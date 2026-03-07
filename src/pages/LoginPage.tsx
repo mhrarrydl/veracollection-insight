@@ -8,11 +8,13 @@ import veraLogo from "@/assets/vera-logo.png";
 export default function LoginPage() {
   const { signIn, signUp } = useAuth();
   const [isRegister, setIsRegister] = useState(false);
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const toEmail = (user: string) => `${user.toLowerCase().trim()}@veracollection.local`;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,9 +23,9 @@ export default function LoginPage() {
 
     let err: string | null;
     if (isRegister) {
-      err = await signUp(email, password, fullName);
+      err = await signUp(toEmail(username), password, fullName);
     } else {
-      err = await signIn(email, password);
+      err = await signIn(toEmail(username), password);
     }
 
     if (err) setError(err);
@@ -52,8 +54,8 @@ export default function LoginPage() {
               </div>
             )}
             <div>
-              <Label>Email</Label>
-              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@contoh.com" required />
+              <Label>Username</Label>
+              <Input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" required />
             </div>
             <div>
               <Label>Password</Label>
